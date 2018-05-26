@@ -86,3 +86,5 @@ let b = 1;
 window.b // undefined
 
 //上面代码中，全局变量a由var命令声明，所以它是顶层对象的属性；全局变量b由let命令声明，所以它不是顶层对象的属性，返回undefined
+
+// 
