@@ -64,3 +64,66 @@ let [x, y = 'b'] = ['a', undefined]; // x='a', y='b'
 
 
 // 2. 对象的解构赋值
+
+//对象的解构与数组有一个重要的不同。数组的元素是按次序排列的，变量的取值由它的位置决定；而对象的属性没有次序，变量必须与属性同名，才能取到正确的值
+let { bar, foo } = { foo: "aaa", bar: "bbb" };
+foo // "aaa"
+bar // "bbb"
+
+let { baz } = { foo: "aaa", bar: "bbb" };
+baz // undefined
+
+//如果变量名与属性名不一致，必须写成下面这样。
+let { foo: baz } = { foo: 'aaa', bar: 'bbb' };
+baz // "aaa"
+
+let obj = { first: 'hello', last: 'world' };
+let { first: f, last: l } = obj;
+f // 'hello'
+l // 'world'
+
+//这实际上说明，对象的解构赋值是下面形式的简写
+let { foo, bar } = {foo: "aaa", bar: "bbb"};
+// 本质是下面的写法
+let { foo: foo, bar: bar } = { foo: "aaa", bar: "bbb" };
+
+//也就是说，对象的解构赋值的内部机制，是先找到同名属性，然后再赋给对应的变量。真正被赋值的是后者，而不是前者。
+let { foo: baz } = { foo: "aaa", bar: "bbb" };
+baz // "aaa"
+foo // error: foo is not defined
+// 上面代码中，foo是匹配的模式，baz才是变量。真正被赋值的是变量baz，而不是模式foo。
+
+// 3.字符串的解构赋值
+
+//字符串也可以解构赋值。这是因为此时，字符串被转换成了一个类似数组的对象。
+const [a, b, c, d, e] = 'hello';
+a // "h"
+b // "e"
+c // "l"
+d // "l"
+e // "o"
+
+//类似数组的对象都有一个length属性，因此还可以对这个属性解构赋值。
+const {length: len} = 'hello';
+len // 5
+
+// 4.函数参数的解构赋值
+function add([x, y]){
+    return x + y;
+}
+
+add([1, 2]); // 3
+
+// 5. 用途
+
+//提取 JSON 数据，解构赋值对提取 JSON 对象中的数据，尤其有用。
+let jsonData = {
+    id: 42,
+    status: "OK",
+    data: [867, 5309]
+};
+
+let { id, status, data: number } = jsonData;
+
+console.log(id, status, number);
+// 42, "OK", [867, 5309]
