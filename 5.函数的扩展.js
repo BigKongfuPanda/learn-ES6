@@ -5,6 +5,7 @@
  * 3. 严格模式
  * 4. name属性
  * 5. 箭头函数
+ * 6. 双冒号运算符
  */
 
  // 1. 函数参数的默认值
@@ -128,7 +129,11 @@ let getTempItem = id => ({ id: id, name: "Temp" });
 // 下面是一种特殊情况，虽然可以运行，但会得到错误的结果
 let foo = () => { a: 1 };
 foo() // undefined
-// 上面代码中，原始意图是返回一个对象{ a: 1 }，但是由于引擎认为大括号是代码块，所以执行了一行语句a: 1。这时，a可以被解释为语句的标签，因此实际执行的语句是1;，然后函数就结束了，没有返回值。
+/**
+ * 上面代码中，原始意图是返回一个对象{ a: 1 }，但是由于引擎认为大括号是代码块，
+ * 所以执行了一行语句a: 1。这时，a可以被解释为语句的标签，因此实际执行的语句是1;，然后函数就结束了，没有返回值。
+ */
+
 
 //使用注意点
 //箭头函数有几个使用注意点。
@@ -136,4 +141,58 @@ foo() // undefined
 //（2）不可以当作构造函数，也就是说，不可以使用new命令，否则会抛出一个错误。
 //（3）不可以使用arguments对象，该对象在函数体内不存在。如果要用，可以用 rest 参数代替。
 //（4）不可以使用yield命令，因此箭头函数不能用作 Generator 函数。
-//上面四点中，第一点尤其值得注意。this对象的指向是可变的，但是在箭头函数中，它是固定的。
+//（5）由于箭头函数没有自己的this，所以当然也就不能用call()、apply()、bind()这些方法去改变this的指向。
+//上面五点中，第一点尤其值得注意。this对象的指向是可变的，但是在箭头函数中，它是固定的。
+
+// 箭头函数根本没有自己的this，导致内部的this就是外层代码块的this。正是因为它没有this，所以也就不能用作构造函数。下面是几个例子
+function foo() {
+  setTimeout(() => {
+    console.log('id:': this.id);
+  }, 100);
+}
+var id = 21;
+foo.call({id: 42}); // id: 42
+/**
+ * 上面代码中，setTimeout的参数是一个箭头函数，这个箭头函数的定义生效是在foo函数生成时，而它的真正执行要等
+ * 到 100 毫秒后。如果是普通函数，执行时this应该指向全局对象window，这时应该输出21。但是，箭头函数导致
+ * this总是指向函数定义生效时所在的对象（本例是{id: 42}），所以输出的是42。
+ */
+
+ //箭头函数可以让setTimeout里面的this，绑定定义时所在的作用域，而不是指向运行时所在的作用域。下面是另一个例子。
+ function Timer() {
+   this.s1 = 0;
+   this.s2 = 0;
+   // 剪头函数
+   setInterval(() => this.s1++, 1000);
+   // 普通函数
+   setInterval(function(){
+     this.s2++;
+   }, 1000);
+ }
+ var timer = new Timer();
+ setTimeout(() => console.log('s1:', timer.s1), 3100); // s1: 3
+ setTimeout(() => console.log('s2:', timer.s2), 3100);// s2: 0
+ /**
+  * 在剪头函数中, this 指向 构造函数中的this，即指向实例化对象 timer，所以当 3100 ms后输出 timer.s1 时，其实就是输出 this.s1，故结果为3。
+  * 而，在普通函数中, this 指向的是 window对象。所以setInterval函数中的 this.s2++ 等同于 是 window.s2++，故，输出 timer.s2时，其结果为 0。
+  */
+
+
+  // 6. 双冒号运算符
+// 双冒号运算符用来取代 call, apply, bind 调用
+obj::fun; 
+// 等同于 
+obj.bind(fun);
+
+obj::fun(...arguments);
+// 等同于
+obj.apply(fun, arguments);
+
+//如果双冒号左边为空，右边是一个对象的方法，则等于将该方法绑定在该对象上面。 
+var method = obj::obj.foo;
+// 等同于
+var method = ::obj.foo;
+
+let log = ::console.log;
+// 等同于
+var log = console.log.bind(console);
