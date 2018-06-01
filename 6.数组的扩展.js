@@ -2,8 +2,12 @@
  * 目录
  * 1.扩展运算符
  * 2.Array.from() 和 Array.of()
- * 3.
+ * 3.find() 和 findIndex()
+ * 4.entries, keys() 和 values()。返回值均为数组，keys()是对键名的遍历、values()是对键值的
+ * 遍历，entries()是对键值对的遍历。
+ * 5.
  */
+
 
  // 1.扩展运算符
 
@@ -67,3 +71,24 @@ Array.of(4); // [4]
 // 比较 
 Array(4); // [ , , , ]
 Array.of() // []
+
+
+// 3.find() 和 findIndex()
+/**
+ * find()： 数组实例的find方法，用于找出第一个符合条件的数组成员。它的参数是一个回调函数，
+ * 所有数组成员依次执行该回调函数，直到找出第一个返回值为true的成员，然后返回该成员。
+ * 如果没有符合条件的成员，则返回undefined。
+ * findIndex(): 数组实例的findIndex方法的用法与find方法非常类似，返回第一个符合条件的数
+ * 组成员的位置，如果所有成员都不符合条件，则返回-1。
+ */
+[1, 4, -5, 10].find(function(value, index, arr){
+  return value < 0;
+}); // -5
+[1, 4, -5, 10].findIndex(function(value, index, arr){
+  return value < 0;
+}); // 2
+/**
+ * indexOf方法无法识别数组的NaN成员，但是findIndex方法可以借助Object.is方法做到。
+ */
+[NaN].indexOf(NaN); // -1
+[NaN].findIndex(y => Object.is(NaN, y));
