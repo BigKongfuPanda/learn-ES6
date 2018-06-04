@@ -2,10 +2,9 @@
  * 目录
  * 1. 函数参数的默认值
  * 2. rest参数
- * 3. 严格模式
- * 4. name属性
- * 5. 箭头函数
- * 6. 双冒号运算符
+ * 3. name属性
+ * 4. 箭头函数
+ * 5. 双冒号运算符
  */
 
  // 1. 函数参数的默认值
@@ -21,7 +20,7 @@ function log(x, y) {
 }
 log('Hello') // Hello World
 log('Hello', 'China') // Hello China
-log('Hello', '') // Hello 
+log('Hello', '') // Hello
 
 // ES6写法
 function log (x, y = 'world') {
@@ -97,7 +96,7 @@ x // 1
  * x，该变量与第一个参数x由于不是同一个作用域，所以不是同一个变量，因此执行y后，内部变量x和外部全局变量x的值都没变。
  */
 
-/** 
+/**
  * 如果将var x = 3的var去除，函数foo的内部变量x就指向第一个参数x，与匿名函数内部的x是一致的，
  * 所以最后输出的就是2，而外层的全局变量 x 依然不受影响。
 */
@@ -123,7 +122,7 @@ function f(a, ...arr, b) {
 }  // 报错
 
 
-// 4. name属性
+// 3. name属性
 
 var f = function () {};
 // ES5
@@ -132,7 +131,7 @@ f.name // ""
 f.name // "f"
 
 
-// 5. 箭头函数
+// 4. 箭头函数
 
 // 当函数体中的代码只有一行的时候，可以省略 return 和 大括号 {}
 var f = () => 5;
@@ -203,17 +202,17 @@ foo.call({id: 42}); // id: 42
   */
 
 
-  // 6. 双冒号运算符
+  // 5. 双冒号运算符
 // 双冒号运算符用来取代 call, apply, bind 调用
-obj::fun; 
-// 等同于 
+obj::fun;
+// 等同于
 obj.bind(fun);
 
 obj::fun(...arguments);
 // 等同于
 obj.apply(fun, arguments);
 
-//如果双冒号左边为空，右边是一个对象的方法，则等于将该方法绑定在该对象上面。 
+//如果双冒号左边为空，右边是一个对象的方法，则等于将该方法绑定在该对象上面。
 var method = obj::obj.foo;
 // 等同于
 var method = ::obj.foo;
